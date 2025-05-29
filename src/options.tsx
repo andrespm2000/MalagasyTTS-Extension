@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
-import extensionIcon from './assets/icon.png';
+import extensionIcon from '../assets/icon.png';
 
 /**
  * Main component of the extension's options page.
- * Allows the user to configure the API endpoint used by the extension.
+ * Allows the user to configure the API endpoint and models used by the extension.
  */
 function OptionsIndex() {
-  /** State that stores the API URL configured by the user. */
-  const [apiUrl, setApiUrl] = useState("")
+  /** State that stores the API URL and models configured by the user. */
+  const [apiUrl, setApiUrl] = useState("");
+  const [detModel, setDetModel] = useState("");
+  const [transModel, setTransModel] = useState("");
+  const [narrModel, setNarrModel] = useState("");
 
   /**
-   * Effect that loads the initial value of `apiUrl` from `chrome.storage.local`.
+   * Effect that loads the initial values from `chrome.storage.local`.
    */
   useEffect(() => {
     chrome.storage.local.get("apiUrl", (result) => {
@@ -18,15 +21,30 @@ function OptionsIndex() {
         setApiUrl(result.apiUrl);
       }
     });
+    chrome.storage.local.get("detModel", (result) => {
+      if (result.detModel) {
+        setDetModel(result.detModel);
+      }
+    });
+    chrome.storage.local.get("transModel", (result) => {
+      if (result.transModel) {
+        setTransModel(result.transModel);
+      }
+    });
+    chrome.storage.local.get("narrModel", (result) => {
+      if (result.narrModel) {
+        setNarrModel(result.narrModel);
+      }
+    });
   }, []);
 
   /**
-   * Saves the value of `apiUrl` in `chrome.storage.local`.
+   * Saves the values `chrome.storage.local`.
    * Displays an alert to the user indicating that the changes have been saved successfully.
    */
   const handleSave = () => {
-    chrome.storage.local.set({ apiUrl }, () => {
-      alert("API URL guardado correctamente.");
+    chrome.storage.local.set({ apiUrl, detModel, transModel, narrModel }, () => {
+      alert("Datos guardados correctamente.");
     });
   };
 
@@ -38,14 +56,15 @@ function OptionsIndex() {
           alt="Extension Icon"
           style={{ width: "32px", height: "32px" }}
         />
-        <h1 style={{ margin: 0 }}>Opciones</h1>
+        <h1 style={{ margin: 0 }}>Options</h1>
       </div>
       <hr style={{ margin: "10px 0", border: "1px solid #ccc" }} />
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-        <h2 style={{ margin: 0 }}>API endpoint</h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "20px" }}>
+      <div>
+        <h2 style={{ margin: "0 0 5px 0" }}>API endpoint</h2>
         <input
           type="text"
-          placeholder="API endpoint"
+          placeholder={apiUrl}
           value={apiUrl}
           onChange={(e) => setApiUrl(e.target.value)}
           style={{
@@ -56,6 +75,52 @@ function OptionsIndex() {
           }}
         />
       </div>
+      <div>
+        <h2 style={{ margin: "0 0 5px 0" }}>Detection model</h2>
+        <input
+          type="text"
+          placeholder={detModel}
+          value={detModel}
+          onChange={(e) => setDetModel(e.target.value)}
+          style={{
+            width: "400px",
+            padding: "8px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+          }}
+        />
+      </div>
+      <div>
+        <h2 style={{ margin: "0 0 5px 0" }}>Translation model</h2>
+        <input
+          type="text"
+          placeholder={transModel}
+          value={transModel}
+          onChange={(e) => setTransModel(e.target.value)}
+          style={{
+            width: "400px",
+            padding: "8px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+          }}
+        />
+      </div>
+      <div>
+        <h2 style={{ margin: "0 0 5px 0" }}>Narration model</h2>
+        <input
+          type="text"
+          placeholder={narrModel}
+          value={narrModel}
+          onChange={(e) => setNarrModel(e.target.value)}
+          style={{
+            width: "400px",
+            padding: "8px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+          }}
+        />
+      </div>
+    </div>
       <button
         onClick={handleSave}
         style={{
@@ -67,7 +132,7 @@ function OptionsIndex() {
           cursor: "pointer",
         }}
       >
-        Guardar cambios
+        Save changes
       </button>
     </div>
   )

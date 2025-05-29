@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import './translator.css';
-import audioIcon from './assets/audio-icon.png';
-import copyIcon from './assets/copy-icon.png';
-import extensionIcon from './assets/icon.png';
+import audioIcon from '../assets/audio-icon.png';
+import copyIcon from '../assets/copy-icon.png';
+import extensionIcon from '../assets/icon.png';
 
 /**
  * Main component of the extension's popup.
@@ -186,38 +186,58 @@ const handleCopyText = () => {
       </h1>
     </div>
     <hr className="divider" />
-      <div className={`input-group ${!selectedText ? "skeleton-active" : ""}`}>
-        {selectedText ? <p className="selected-text">{selectedText}</p> 
-        : (<Skeleton height={60} width="100%" baseColor="#151C12" highlightColor="#F9423A"/>)}
-      </div>
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
-      <div className="detected-lang">
-        {jsonData && jsonData.detected_lang in languages ? <p><strong>Detectado:</strong> {languages[jsonData.detected_lang as keyof typeof languages]}</p> : (<Skeleton height={20} width="100%" baseColor="#151C12" highlightColor="#F9423A"/>)}
-      </div>
-      <div className={`translation-box ${!jsonData ? "skeleton-active" : ""}`}>
-      {jsonData ? (
-        <>
-          <p className="translated-text">{jsonData.translated_text}</p>
-          <div className="button-group">
-            <button onClick={handleCopyText} className="copy-button" title="Copiar texto traducido">
-                <img src={copyIcon} alt="Copy" className="copy-icon" />
-            </button>
-          {audioUrl && (
-            <button
-                  onClick={handlePlayAudio}
-                  disabled={isPlaying}
-                  className="audio-button"
-                  title={isPlaying ? "Reproduciendo..." : "Reproducir audio"}
-                >
-                  <img src={audioIcon} alt="Listen" className="audio-icon" />
-            </button>
+    {selectedText && !error ? (
+      <div>
+        <div className={`input-group ${!selectedText ? "skeleton-active" : ""}`}>
+          <p className="selected-text">{selectedText}</p>
+        </div>
+        <div className="detected-lang">
+          {jsonData && jsonData.detected_lang in languages ? (
+            <p>
+              <strong>Detected:</strong> {languages[jsonData.detected_lang as keyof typeof languages]}
+            </p>
+          ) : (
+            <Skeleton height={20} width="100%" baseColor="#151C12" highlightColor="#F9423A" />
           )}
-          </div>
-        </>
-      ) : (
-        <Skeleton height={80} width="100%" baseColor="#151C12" highlightColor="#F9423A"/>
-      )}
-    </div>
+        </div>
+        <div className={`translation-box ${!jsonData ? "skeleton-active" : ""}`}>
+          {jsonData ? (
+            <>
+              <p className="translated-text">{jsonData.translated_text}</p>
+              <div className="button-group">
+                <button onClick={handleCopyText} className="copy-button" title="Copy translated text">
+                  <img src={copyIcon} alt="Copy" className="copy-icon" />
+                </button>
+                {audioUrl && (
+                  <button
+                    onClick={handlePlayAudio}
+                    disabled={isPlaying}
+                    className="audio-button"
+                    title={isPlaying ? "Playing..." : "Play audio"}
+                  >
+                    <img src={audioIcon} alt="Listen" className="audio-icon" />
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            <Skeleton height={80} width="100%" baseColor="#151C12" highlightColor="#F9423A" />
+          )}
+        </div>
+      </div>
+    ) : (
+      <div className="no-selection">
+        {error ? (
+          <p style={{ color: "red", textAlign: "center" }}>
+            Error: {error}
+          </p>
+        ) : (
+          <p style={{ color: "#FFFFFF", textAlign: "center" }}>
+            Please, select some text for translation.
+          </p>
+        )}
+      </div>
+    )}
     </div>
   )
 }

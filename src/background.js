@@ -1,8 +1,13 @@
 /**
- * URL for the server API endpoint.
+ * URL for the server API endpoint and model URIs.
  * Can be overwritten with a value stored in `chrome.storage.local`.
  */
-let apiUrl = "http://prodiasv21.fis.usal.es:8000/models";
+const config = {
+  apiUrl: "http://prodiasv21.fis.usal.es:8000",
+  detModel: "papluca/xlm-roberta-base-language-detection",
+  transModel: "facebook/nllb-200-distilled-600M",
+  narrModel: "facebook/mms-tts-mlg"
+}
 
 /**
  * Header for the API requests.
@@ -12,11 +17,14 @@ const apiHeader = {
 };
 
 /**
- * Retrieves the API URL stored in `chrome.storage.local` and overwrites it if it exists.
+ * Retrieves the data stored in `chrome.storage.local` and overwrites it if it exists.
  */
-chrome.storage.local.get("apiUrl", (result) => {
-  if (result.apiUrl) {
-    apiUrl = result.apiUrl;
+chrome.storage.local.get(["apiUrl","detModel","transModel","narrModel"], (result) => {
+  if (result.apiUrl && result.detModel && result.transModel && result.narrModel) {
+    config.apiUrl = result.apiUrl;
+    config.detModel = result.detModel;
+    config.transModel = result.transModel;
+    config.narrModel = result.narrModel;
   }
 });
 
@@ -24,9 +32,10 @@ chrome.storage.local.get("apiUrl", (result) => {
  * Listens for changes in `chrome.storage` and updates the API URL if it changes.
  */
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (changes.apiUrl) {
-    apiUrl = changes.apiUrl.newValue; 
-  }
+  if (changes.apiUrl) config.apiUrl = changes.apiUrl.newValue; 
+  if (changes.detModel) config.detModel = changes.detModel.newValue; 
+  if (changes.transModel) config.transModel = changes.transModel.newValue; 
+  if (changes.narrModel) config.narrModel = changes.narrModel.newValue; 
 });
 
 /**
@@ -46,7 +55,7 @@ chrome.runtime.onConnect.addListener((p) => {
 });
 
 /**
- * Pauses execution for a specific number of milliseconds.
+ * Pauses execution for a specific number of milliseconds
  * @param ms - Time in milliseconds to pause.
  * @returns A promise that resolves after the specified time.
  */
@@ -78,10 +87,14 @@ Buffer.prototype.split = function (delimiter) {
 async function speakProcess(selectionText){
 
   let requestData = new URLSearchParams({
-    "input": selectionText
+    "input": selectionText,
+    "detModel": config.detModel,
+    "transModel": config.transModel,
+    "narrModel": config.narrModel
   });
 
-  fetch(apiUrl, {
+
+  fetch(config.apiUrl+"/models", {
     method: 'POST',
     headers: apiHeader,
     body: requestData
