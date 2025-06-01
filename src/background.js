@@ -20,12 +20,10 @@ const apiHeader = {
  * Retrieves the data stored in `chrome.storage.local` and overwrites it if it exists.
  */
 chrome.storage.local.get(["apiUrl","detModel","transModel","narrModel"], (result) => {
-  if (result.apiUrl && result.detModel && result.transModel && result.narrModel) {
-    config.apiUrl = result.apiUrl;
-    config.detModel = result.detModel;
-    config.transModel = result.transModel;
-    config.narrModel = result.narrModel;
-  }
+  config.apiUrl = result.apiUrl && result.apiUrl.trim() ? result.apiUrl : config.apiUrl;
+  config.detModel = result.detModel && result.detModel.trim() ? result.detModel : config.detModel;
+  config.transModel = result.transModel && result.transModel.trim() ? result.transModel : config.transModel;
+  config.narrModel = result.narrModel && result.narrModel.trim() ? result.narrModel : config.narrModel;
 });
 
 /**
@@ -37,6 +35,8 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   if (changes.transModel) config.transModel = changes.transModel.newValue; 
   if (changes.narrModel) config.narrModel = changes.narrModel.newValue; 
 });
+
+console.log(config);
 
 /**
  * Communication port with the popup.
@@ -164,6 +164,16 @@ chrome.runtime.onInstalled.addListener(() => {
     id: "plasmo-show-text",
     title: "MalagasyTTS: Translate selected text",
     contexts: ["selection"]
+  });
+  chrome.storage.local.get(["apiUrl", "detModel", "transModel", "narrModel"], (result) => {
+    const defaults = {};
+    if (!result.apiUrl) defaults.apiUrl = config.apiUrl;
+    if (!result.detModel) defaults.detModel = config.detModel;
+    if (!result.transModel) defaults.transModel = config.transModel;
+    if (!result.narrModel) defaults.narrModel = config.narrModel;
+    if (Object.keys(defaults).length > 0) {
+      chrome.storage.local.set(defaults);
+    }
   });
 });
 

@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import extensionIcon from '../assets/icon.png';
 
+const config = {
+  apiUrl: "http://prodiasv21.fis.usal.es:8000",
+  detModel: "papluca/xlm-roberta-base-language-detection",
+  transModel: "facebook/nllb-200-distilled-600M",
+  narrModel: "facebook/mms-tts-mlg"
+}
+
 /**
  * Main component of the extension's options page.
  * Allows the user to configure the API endpoint and models used by the extension.
@@ -16,27 +23,13 @@ function OptionsIndex() {
    * Effect that loads the initial values from `chrome.storage.local`.
    */
   useEffect(() => {
-    chrome.storage.local.get("apiUrl", (result) => {
-      if (result.apiUrl) {
-        setApiUrl(result.apiUrl);
-      }
-    });
-    chrome.storage.local.get("detModel", (result) => {
-      if (result.detModel) {
-        setDetModel(result.detModel);
-      }
-    });
-    chrome.storage.local.get("transModel", (result) => {
-      if (result.transModel) {
-        setTransModel(result.transModel);
-      }
-    });
-    chrome.storage.local.get("narrModel", (result) => {
-      if (result.narrModel) {
-        setNarrModel(result.narrModel);
-      }
-    });
-  }, []);
+  chrome.storage.local.get(["apiUrl", "detModel", "transModel", "narrModel"], (result) => {
+    setApiUrl(result.apiUrl ?? config.apiUrl);
+    setDetModel(result.detModel ?? config.detModel);
+    setTransModel(result.transModel ?? config.transModel);
+    setNarrModel(result.narrModel ?? config.narrModel);
+  });
+}, []);
 
   /**
    * Saves the values `chrome.storage.local`.
@@ -44,7 +37,7 @@ function OptionsIndex() {
    */
   const handleSave = () => {
     chrome.storage.local.set({ apiUrl, detModel, transModel, narrModel }, () => {
-      alert("Datos guardados correctamente.");
+      alert("Data saved correctly!");
     });
   };
 
@@ -64,8 +57,7 @@ function OptionsIndex() {
         <h2 style={{ margin: "0 0 5px 0" }}>API endpoint</h2>
         <input
           type="text"
-          placeholder={apiUrl}
-          value={apiUrl}
+          placeholder={apiUrl ? apiUrl : config.apiUrl}
           onChange={(e) => setApiUrl(e.target.value)}
           style={{
             width: "400px",
@@ -79,8 +71,7 @@ function OptionsIndex() {
         <h2 style={{ margin: "0 0 5px 0" }}>Detection model</h2>
         <input
           type="text"
-          placeholder={detModel}
-          value={detModel}
+          placeholder={detModel ? detModel : config.detModel}
           onChange={(e) => setDetModel(e.target.value)}
           style={{
             width: "400px",
@@ -94,8 +85,7 @@ function OptionsIndex() {
         <h2 style={{ margin: "0 0 5px 0" }}>Translation model</h2>
         <input
           type="text"
-          placeholder={transModel}
-          value={transModel}
+          placeholder={transModel ? transModel : config.transModel}
           onChange={(e) => setTransModel(e.target.value)}
           style={{
             width: "400px",
@@ -109,8 +99,7 @@ function OptionsIndex() {
         <h2 style={{ margin: "0 0 5px 0" }}>Narration model</h2>
         <input
           type="text"
-          placeholder={narrModel}
-          value={narrModel}
+          placeholder={narrModel ? narrModel : config.narrModel}
           onChange={(e) => setNarrModel(e.target.value)}
           style={{
             width: "400px",
