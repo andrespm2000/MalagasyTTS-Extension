@@ -1,7 +1,7 @@
 {
   "name": "malagasy-tts-extension",
   "displayName": "MalagasyTTS",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "MalagasyTTS web browser extension",
   "author": "Plasmo Corp. <foss@plasmo.com>",
   "type": "module",
@@ -38,6 +38,7 @@
   },
   "manifest": {
     "host_permissions": [
+      "http://*/*",
       "https://*/*"
     ],
     "permissions": [
@@ -46,7 +47,7 @@
       "activeTab"
     ],
     "background": {
-      "service_worker": "background.js"
+      "scripts": ["background.js"]
     },
     "action": {
       "default_popup": "popup.html"
