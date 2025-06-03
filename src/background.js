@@ -55,15 +55,6 @@ chrome.runtime.onConnect.addListener((p) => {
 });
 
 /**
- * Pauses execution for a specific number of milliseconds
- * @param ms - Time in milliseconds to pause.
- * @returns A promise that resolves after the specified time.
- */
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-/**
  * Splits a `Buffer` into parts using a delimiter.
  * @param delimiter - The delimiter used to split the `Buffer`.
  * @returns An array of `Buffer` split by the delimiter.
@@ -84,7 +75,7 @@ Buffer.prototype.split = function (delimiter) {
  * Processes the selected text by sending it to the API and handling the response.
  * @param selectionText - Selected text to be sent to the API.
  */
-async function speakProcess(selectionText){
+async function translationProcess(selectionText){
 
   let requestData = new URLSearchParams({
     "input": selectionText,
@@ -188,6 +179,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       }
     }, 1000);
 
-    speakProcess(info.selectionText);
+    translationProcess(info.selectionText);
   }
 });
