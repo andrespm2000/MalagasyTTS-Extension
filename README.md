@@ -27,8 +27,8 @@
 
 ## About The Project
 
-[![Demo GIF][extension-demo-gif]]
-[![Options GIF][options-demo-gif]]
+![Demo GIF][extension-demo-gif]
+![Options GIF][options-demo-gif]
 
 MalagasyTTS allows you to select any text on the webpage for translating to Malagasy, along with a TTS narration.
 <br/> 
@@ -124,8 +124,8 @@ Andrés Perdomo Martínez - [![LinkedIn][linkedin-shield]][linkedin-url] - andre
 [linkedin-shield]: https://custom-icon-badges.demolab.com/badge/LinkedIn-0A66C2?logo=linkedin-white&logoColor=fff
 [linkedin-url]: https://www.linkedin.com/in/andres-perdomo-12bb3b1ba/
 
-[extension-demo-gif]: assets/screenshot.png
-[options-demo-gif]: assets/smth.png
+[extension-demo-gif]: assets/gif-translation.gif
+[options-demo-gif]: assets/gif-options.gif
 
 [chrome-logo]: https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white
 [firefox-logo]: https://img.shields.io/badge/Firefox_Browser-FF7139?style=for-the-badge&logo=Firefox-Browser&logoColor=white
