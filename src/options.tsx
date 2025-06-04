@@ -35,7 +35,20 @@ function OptionsIndex() {
    * Saves the values `chrome.storage.local`.
    * Displays an alert to the user indicating that the changes have been saved successfully.
    */
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (apiUrl && apiUrl !== config.apiUrl) {
+      try {
+        const response = await fetch(apiUrl, { method: "GET" });
+        const text = await response.text();
+        if (!text.includes("<h2>MalagasyTTS Server is running.</h2>")) {
+          alert("Error: Invalid API endpoint or unavailable server");
+          return;
+        }
+      } catch (e) {
+        alert("Error: Could not connect to the API endpoint");
+        return;
+      }
+    }
     chrome.storage.local.set({ apiUrl, detModel, transModel, narrModel }, () => {
       alert("Data saved correctly!");
     });
