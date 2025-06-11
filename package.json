@@ -1,7 +1,7 @@
 {
   "name": "malagasy-tts-extension",
   "displayName": "MalagasyTTS",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "MalagasyTTS web browser extension",
   "author": "Plasmo Corp. <foss@plasmo.com>",
   "type": "module",
