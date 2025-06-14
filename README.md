@@ -44,7 +44,7 @@ MalagasyTTS is available for:
 
 ## How to use it
 1. Select text on a webpage.
-2. Right-click and choose "MalagasyTTS: Translate selected text."
+2. Right-click and choose "MalagasyTTS: Translate selected text"
 3. The popup will display the detected language, translation, and options to copy the text or play the audio.
 4. For configuring the extension, open the options page by navigating to the extension settings.
 Enter the desired API endpoint and/or models and save the changes.
