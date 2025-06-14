@@ -125,7 +125,7 @@ Andrés Perdomo Martínez - [![LinkedIn][linkedin-shield]][linkedin-url] - andre
 [linkedin-url]: https://www.linkedin.com/in/andres-perdomo-12bb3b1ba/
 
 [extension-demo-gif]: assets/gif-translation.gif
-[options-demo-gif]: assets/gif-options.gif
+[options-demo-gif]: assets/options.gif
 
 [chrome-logo]: https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white
 [firefox-logo]: https://img.shields.io/badge/Firefox_Browser-FF7139?style=for-the-badge&logo=Firefox-Browser&logoColor=white
