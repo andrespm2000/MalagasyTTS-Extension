@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import React from 'react';
+import { useEffect, useState, useRef } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import './translator.css';
@@ -11,27 +12,17 @@ import extensionIcon from '../assets/icon.png';
  * Displays the selected text, its translation, and allows playing the audio or copying the translated text.
  */
 const Popup = () => {
-  
-  /**
-   * Interface for the JSON data received from the backend.
-   */
-  interface JsonData {
-    /** Language detected in the selected text. */
-    detected_lang: string;
-    /** Translated text. */
-    translated_text: string;
-  }
 
   /**
    * Map of language codes to names in Malagasy.
    */
   const languages = {
     "ar": "Arabo",
-    "bg": "Bologara",
-    "de": "Alemà",
+    "bg": "Bolgara",
+    "de": "Alemana",
     "el": "Grika",
     "en": "Anglisy",
-    "es": "Espaniola",
+    "es": "Espaniôla",
     "fr": "Frantsay",
     "hi": "Hindi",
     "it": "Italiana",
@@ -40,18 +31,20 @@ const Popup = () => {
     "pl": "Poloney",
     "pt": "Portogey",
     "ru": "Rosiana",
-    "sw": "Soahily",
-    "th": "Thai",
+    "sw": "Swahili",
+    "th": "Taỳ",
     "tr": "Tiorka",
-    "ur": "Ordò",
+    "ur": "Urdu",
     "vi": "Vietnamiana",
     "zh": "Sinoa"
   }
 
   /** Text selected by the user. */
   const [selectedText, setSelectedText] = useState("");
-  /** JSON data received from the backend. */
-  const [jsonData, setJsonData] = useState<JsonData | null>(null);
+  /** Detected language of the selected text. */
+  const [detectedLang, setDetectedLang] = useState<string | null>(null);
+  /** Translated text. */
+  const [translatedText, setTranslatedText] = useState<string | null>(null);
   /** URL of the generated audio. */
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   /** Error message in case of failure. */
@@ -59,11 +52,14 @@ const Popup = () => {
   /** Audio playback state. */
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const portRef = useRef<chrome.runtime.Port | null>(null);
+
   /**
    * Effect that establishes the connection with the background script and handles received messages.
    */
   useEffect(() => {
     const port = chrome.runtime.connect();
+    portRef.current = port;
 
     /**
      * Interface for the response data message.
@@ -74,6 +70,17 @@ const Popup = () => {
       json: any;
       base64Blob: string;
       };
+    }
+
+    /**
+     * Interface for the response data retry message.
+     */
+    interface ResponseDataRetryMessage {
+    type: "RESPONSE_DATA_RETRY";
+    data: {
+      json: any;
+      base64Blob: string;
+    };
     }
 
     /**
@@ -95,7 +102,7 @@ const Popup = () => {
     /**
      * Type that groups all possible received messages.
      */
-    type Message = ResponseDataMessage | ErrorMessage | GetSelectedTextMessage;
+    type Message = ResponseDataMessage | ResponseDataRetryMessage | ErrorMessage | GetSelectedTextMessage;
 
     /**
      * Handles messages received from the background script.
@@ -104,8 +111,9 @@ const Popup = () => {
     const handleMessage = (message: Message) => {
       if (message.type === "GET_SELECTED_TEXT") {
         setSelectedText(message.text);
-      } else if (message.type === "RESPONSE_DATA") {
-      setJsonData(message.data.json);
+      } else if (message.type === "RESPONSE_DATA" || message.type === "RESPONSE_DATA_RETRY") {
+      if (message.type === "RESPONSE_DATA") setDetectedLang(message.data.json.detected_lang);
+      setTranslatedText(message.data.json.translated_text);
        // Decodes the audio in base64 and generates a Blob URL
       const byteCharacters = atob(message.data.base64Blob.split(',')[1]);
       const byteArrays = [];
@@ -135,6 +143,7 @@ const Popup = () => {
     return () => {
       port.onMessage.removeListener(handleMessage);
       port.disconnect();
+      portRef.current = null;
     };
   }, [])
 
@@ -167,8 +176,8 @@ const Popup = () => {
    * Copies the translated text to the clipboard.
    */
 const handleCopyText = () => {
-  if (jsonData?.translated_text) {
-    navigator.clipboard.writeText(jsonData.translated_text)
+  if (translatedText) {
+    navigator.clipboard.writeText(translatedText)
       .catch((error) => {
         console.error("Error al copiar el texto:", error);
       });
@@ -192,30 +201,61 @@ const handleCopyText = () => {
           <p className="selected-text">{selectedText}</p>
         </div>
         <div className="detected-lang">
-          {jsonData && jsonData.detected_lang in languages ? (
+          {detectedLang && detectedLang in languages ? (
             <p>
-              <strong>Detected:</strong> {languages[jsonData.detected_lang as keyof typeof languages]}
+              <strong>Fiteny hita:</strong> {languages[detectedLang as keyof typeof languages]}
             </p>
           ) : (
             <Skeleton height={20} width="100%" baseColor="#151C12" highlightColor="#F9423A" />
           )}
         </div>
-        <div className={`translation-box ${!jsonData ? "skeleton-active" : ""}`}>
-          {jsonData ? (
+        <div className="detected-lang">
+          {detectedLang && detectedLang in languages ? (
             <>
-              <p className="translated-text">{jsonData.translated_text}</p>
+              <label htmlFor="language-select" style={{ color: "#fff", marginRight: 8 }}><strong>Mifidy fiteny:</strong></label>
+              <select
+                id="language-select"
+                onChange={async (e) => {
+                  const langCode = e.target.value;
+                  if (!langCode) return;
+                  setTranslatedText(null);
+                  if (portRef.current) {
+                    portRef.current.postMessage({
+                      type: "TRANSLATE_RETRY",
+                      langCode,
+                      text: selectedText,
+                    });
+                  }
+                }}
+                defaultValue=""
+                style={{ padding: "2px 4px", borderRadius: 4, fontSize: "0.75em", width: "auto", minWidth: 80, maxWidth: 160, background: "#151C12",color: "#FFFFFF",border: "1px solid #E0E0E0"}}
+              >
+                <option value="" disabled>Fiteny</option>
+                {Object.entries(languages).map(([code, name]) => (
+                  <option key={code} value={code}>{name}</option>
+                ))}
+              </select>
+            </>
+          ) : (
+            <Skeleton height={20} width="100%" baseColor="#151C12" highlightColor="#F9423A" />
+          )}
+        </div>
+        <div className={`translation-box ${!translatedText ? "skeleton-active" : ""}`}>
+          {translatedText ? (
+            <>
+              <p className="translated-text">{translatedText}</p>
               <div className="button-group">
-                <button onClick={handleCopyText} className="copy-button" title="Copy translated text">
-                  <img src={copyIcon} alt="Copy" className="copy-icon" />
+                <button onClick={handleCopyText} className="copy-button" title="Kopia lahatsoratra nadika">
+                  <img src={copyIcon} alt="Kopia" className="copy-icon" />
                 </button>
                 {audioUrl && (
                   <button
                     onClick={handlePlayAudio}
                     disabled={isPlaying}
                     className="audio-button"
-                    title={isPlaying ? "Playing..." : "Play audio"}
+                    title={isPlaying ? "Mamerina ny feo..." : "Mameno feo"}
                   >
-                    <img src={audioIcon} alt="Listen" className="audio-icon" />
+                    <img src={audioIcon} alt="Henoy" className="audio-icon" />
                   </button>
                 )}
               </div>
@@ -228,13 +268,17 @@ const handleCopyText = () => {
     ) : (
       <div className="no-selection">
         {error ? (
-          <p style={{ color: "red", textAlign: "center" }}>
-            Error: {error}
-          </p>
+          <div>
+            <p style={{ color: "red", textAlign: "center" }}>
+              Error: {error}
+            </p>
+          </div>
         ) : (
-          <p style={{ color: "#FFFFFF", textAlign: "center" }}>
-            Please, select some text for translation.
-          </p>
+          <div>
+            <p style={{ color: "#FFFFFF", textAlign: "center" }}>
+              Misafidiana lahatsoratra handikana azafady.
+            </p>
+          </div>
         )}
       </div>
     )}

@@ -3,7 +3,7 @@
  * Can be overwritten with a value stored in `chrome.storage.local`.
  */
 const config = {
-  apiUrl: "http://prodiasv21.fis.usal.es:8000",
+  apiUrl: "https://esalab-big.taild1b22.ts.net",
   detModel: "papluca/xlm-roberta-base-language-detection",
   transModel: "facebook/nllb-200-distilled-600M",
   narrModel: "facebook/mms-tts-mlg"
@@ -36,8 +36,6 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   if (changes.narrModel) config.narrModel = changes.narrModel.newValue; 
 });
 
-console.log(config);
-
 /**
  * Communication port with the popup.
  * Initialized as `null` and updated when connecting with the popup.
@@ -51,6 +49,12 @@ chrome.runtime.onConnect.addListener((p) => {
   port = p;
   port.onDisconnect.addListener(() => {
     port = null;
+  });
+
+  port.onMessage.addListener((msg) => {
+    if (msg.type === "TRANSLATE_RETRY") {
+      translationProcessRetry(msg.text, msg.langCode);
+    }
   });
 });
 
@@ -146,6 +150,82 @@ async function translationProcess(selectionText){
     }
   });
 }
+/**
+ * Reprocesses the selected text by sending it and the specified language to the API and handling the response.
+ * @param selectionText - Selected text to be sent to the API.
+ * @param langCode - Language code for the translation.
+ */
+async function translationProcessRetry(selectionText, langCode){
+  
+  let requestData = new URLSearchParams({
+    "input": selectionText,
+    "langCode": langCode,
+    "transModel": config.transModel,
+    "narrModel": config.narrModel
+  });
+
+
+  fetch(config.apiUrl+"/modelsretry", {
+    method: 'POST',
+    headers: apiHeader,
+    body: requestData
+  })
+  .then(async (response) => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+
+    const boundary = "boundary123";
+    let responseBuffer = Buffer.from(await response.arrayBuffer());
+    let boundaryBuffer = Buffer.from(`--${boundary}`, 'utf-8');
+    let parts = responseBuffer.split(boundaryBuffer);
+    let jsonData = null;
+    let audioBuffer = null;
+
+    // Processes the response parts to extract JSON and audio
+    parts.forEach(part => {
+      let headerEndIndex = part.indexOf('\r\n\r\n');
+      if (headerEndIndex !== -1) {
+        let headers = part.slice(0, headerEndIndex).toString('utf-8');
+        let body = part.slice(headerEndIndex + 4);
+
+        if (headers.includes("Content-Type: application/json")) {
+          // Extract JSON
+          jsonData = JSON.parse(body.toString('utf-8').trim());
+        } else if (headers.includes("Content-Type: audio/wav")) {
+          // Extract audio file
+          audioBuffer = body;
+        }
+      }
+    });
+
+    if (jsonData && audioBuffer) {
+      
+      const audioBlob = new Blob([audioBuffer], { type: 'audio/wav' });
+      const base64Blob = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Data = reader.result;
+          resolve(base64Data);
+        };
+      });
+      // Send a message to the popup with the data
+      if (port) {
+        port.postMessage({ type: "RESPONSE_DATA_RETRY", data: {
+          json: jsonData,
+          base64Blob: base64Blob
+        }});
+      }
+    }
+  })
+  .catch(error => {
+    // Error handling: send message to the popup
+    if (port) {
+      port.postMessage({ type: "ERROR", message: error.message });
+    }
+  });
+}
 
 /**
  * Sets up the context menu when the extension is installed.
@@ -153,7 +233,7 @@ async function translationProcess(selectionText){
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "plasmo-show-text",
-    title: "MalagasyTTS: Translate selected text",
+    title: "MalagasyTTS: Fandikana lahatsoratra voafantina",
     contexts: ["selection"]
   });
   chrome.storage.local.get(["apiUrl", "detModel", "transModel", "narrModel"], (result) => {
@@ -182,3 +262,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     translationProcess(info.selectionText);
   }
 });
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { translationProcess };
+}

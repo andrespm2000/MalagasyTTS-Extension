@@ -1,10 +1,11 @@
+import React from 'react';
 import { useState, useEffect } from "react";
 import Alert from '@mui/material/Alert';
 import extensionIcon from '../assets/icon.png';
 import './options.css';
 
 const config = {
-  apiUrl: "http://prodiasv21.fis.usal.es:8000",
+  apiUrl: "https://esalab-big.taild1b22.ts.net",
   detModel: "papluca/xlm-roberta-base-language-detection",
   transModel: "facebook/nllb-200-distilled-600M",
   narrModel: "facebook/mms-tts-mlg"
@@ -75,10 +76,10 @@ const validateForm: ValidateForm = async (endpoint) => {
     const response: Response = await fetch(endpoint, { method: "GET" });
     const text: string = await response.text();
     if (!text.includes("<h2>MalagasyTTS Server is running.</h2>")) {
-      error = "Error: Invalid API endpoint or unavailable server";
+      error = "Error: Endpoint API tsy mety na mpizara tsy misy";
     }
   } catch (e) {
-    error = "Error: Invalid API endpoint or unavailable server";
+    error = "Error: Endpoint API tsy mety na mpizara tsy misy";
   }
 
   return error;
@@ -92,7 +93,7 @@ const validateForm: ValidateForm = async (endpoint) => {
           alt="Extension Icon"
           style={{ width: "32px", height: "32px" }}
         />
-        <h1 className="options-title">Options</h1>
+        <h1 className="options-title">Safidy</h1>
       </div>
       <hr className="options-hr" />
       <div className="options-form">
@@ -113,7 +114,7 @@ const validateForm: ValidateForm = async (endpoint) => {
                     )}
       </div>
       <div className="options-group">
-        <h2>Detection model</h2>
+        <h2>Modely famantarana</h2>
         <input
           type="text"
           placeholder={detModel ? detModel : config.detModel}
@@ -122,7 +123,7 @@ const validateForm: ValidateForm = async (endpoint) => {
         />
       </div>
       <div className="options-group">
-        <h2>Translation model</h2>
+        <h2>Modely fandikana</h2>
         <input
           type="text"
           placeholder={transModel ? transModel : config.transModel}
@@ -131,7 +132,7 @@ const validateForm: ValidateForm = async (endpoint) => {
         />
       </div>
       <div className="options-group">
-        <h2>Narration model</h2>
+        <h2>Modely fitantarana</h2>
         <input
           type="text"
           placeholder={narrModel ? narrModel : config.narrModel}
@@ -144,14 +145,14 @@ const validateForm: ValidateForm = async (endpoint) => {
         onClick={handleSave}
         className="options-save-btn"
       >
-        Save changes
+        Tahiry fanovana
       </button>
        {showSuccess && (
         <div
           className={`options-alert-overlay${fadeOut ? " fade-out" : ""}`}
         >
           <Alert severity="success">
-            Data saved correctly!
+            Angona voatahiry tsara!
           </Alert>
         </div>
       )}
