@@ -1,7 +1,7 @@
 {
   "name": "malagasy-tts-extension",
   "displayName": "MalagasyTTS",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "MalagasyTTS web browser extension",
   "author": "Plasmo Corp. <foss@plasmo.com>",
   "type": "module",
@@ -23,12 +23,25 @@
     "sharp": "^0.34.1"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
     "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/chrome": "0.0.258",
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.0.0",
+    "jest-canvas-mock": "^2.5.2",
+    "jest-environment-jsdom": "^30.0.0",
+    "jest-fetch-mock": "^3.0.3",
+    "jest-transform-stub": "^2.0.0",
+    "nock": "^14.0.5",
     "prettier": "3.2.4",
+    "sinon-chrome": "^3.0.1",
     "typedoc": "^0.28.3",
     "typescript": "^5.3.3"
   },
@@ -43,7 +56,9 @@
       "activeTab"
     ],
     "background": {
-      "scripts": ["background.js"]
+      "scripts": [
+        "background.js"
+      ]
     },
     "action": {
       "default_popup": "popup.html"
