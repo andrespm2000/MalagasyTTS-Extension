@@ -76,11 +76,61 @@ Buffer.prototype.split = function (delimiter) {
 };
 
 /**
+ * Processes the API response, extracts the JSON and audio, and sends it to the popup.
+ */
+async function handleApiResponse(response, responseType = "RESPONSE_DATA") {
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+
+  const boundary = "boundary123";
+  let responseBuffer = Buffer.from(await response.arrayBuffer());
+  let boundaryBuffer = Buffer.from(`--${boundary}`, 'utf-8');
+  let parts = responseBuffer.split(boundaryBuffer);
+  let jsonData = null;
+  let audioBuffer = null;
+
+  parts.forEach(part => {
+    let headerEndIndex = part.indexOf('\r\n\r\n');
+    if (headerEndIndex !== -1) {
+      let headers = part.slice(0, headerEndIndex).toString('utf-8');
+      let body = part.slice(headerEndIndex + 4);
+
+      if (headers.includes("Content-Type: application/json")) {
+        jsonData = JSON.parse(body.toString('utf-8').trim());
+      } else if (headers.includes("Content-Type: audio/wav")) {
+        audioBuffer = body;
+      }
+    }
+  });
+
+  if (jsonData && audioBuffer) {
+    const audioBlob = new Blob([audioBuffer], { type: 'audio/wav' });
+    const base64Blob = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = () => {
+        const base64Data = reader.result;
+        resolve(base64Data);
+      };
+    });
+    if (port) {
+      port.postMessage({
+        type: responseType,
+        data: {
+          json: jsonData,
+          base64Blob: base64Blob
+        }
+      });
+    }
+  }
+}
+
+/**
  * Processes the selected text by sending it to the API and handling the response.
  * @param selectionText - Selected text to be sent to the API.
  */
-async function translationProcess(selectionText){
-
+async function translationProcess(selectionText) {
   let requestData = new URLSearchParams({
     "input": selectionText,
     "detModel": config.detModel,
@@ -88,75 +138,24 @@ async function translationProcess(selectionText){
     "narrModel": config.narrModel
   });
 
-
-  fetch(config.apiUrl+"/models", {
+  fetch(config.apiUrl + "/models", {
     method: 'POST',
     headers: apiHeader,
     body: requestData
   })
-  .then(async (response) => {
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-
-    const boundary = "boundary123";
-    let responseBuffer = Buffer.from(await response.arrayBuffer());
-    let boundaryBuffer = Buffer.from(`--${boundary}`, 'utf-8');
-    let parts = responseBuffer.split(boundaryBuffer);
-    let jsonData = null;
-    let audioBuffer = null;
-
-    // Processes the response parts to extract JSON and audio
-    parts.forEach(part => {
-      let headerEndIndex = part.indexOf('\r\n\r\n');
-      if (headerEndIndex !== -1) {
-        let headers = part.slice(0, headerEndIndex).toString('utf-8');
-        let body = part.slice(headerEndIndex + 4);
-
-        if (headers.includes("Content-Type: application/json")) {
-          // Extract JSON
-          jsonData = JSON.parse(body.toString('utf-8').trim());
-        } else if (headers.includes("Content-Type: audio/wav")) {
-          // Extract audio file
-          audioBuffer = body;
-        }
+    .then(response => handleApiResponse(response, "RESPONSE_DATA"))
+    .catch(error => {
+      if (port) {
+        port.postMessage({ type: "ERROR", message: error.message });
       }
     });
-
-    if (jsonData && audioBuffer) {
-      
-      const audioBlob = new Blob([audioBuffer], { type: 'audio/wav' });
-      const base64Blob = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = () => {
-          const base64Data = reader.result;
-          resolve(base64Data);
-        };
-      });
-      // Send a message to the popup with the data
-      if (port) {
-        port.postMessage({ type: "RESPONSE_DATA", data: {
-          json: jsonData,
-          base64Blob: base64Blob
-        }});
-      }
-    }
-  })
-  .catch(error => {
-    // Error handling: send message to the popup
-    if (port) {
-      port.postMessage({ type: "ERROR", message: error.message });
-    }
-  });
 }
 /**
  * Reprocesses the selected text by sending it and the specified language to the API and handling the response.
  * @param selectionText - Selected text to be sent to the API.
  * @param langCode - Language code for the translation.
  */
-async function translationProcessRetry(selectionText, langCode){
-  
+async function translationProcessRetry(selectionText, langCode) {
   let requestData = new URLSearchParams({
     "input": selectionText,
     "langCode": langCode,
@@ -164,69 +163,18 @@ async function translationProcessRetry(selectionText, langCode){
     "narrModel": config.narrModel
   });
 
-
-  fetch(config.apiUrl+"/modelsretry", {
+  fetch(config.apiUrl + "/modelsretry", {
     method: 'POST',
     headers: apiHeader,
     body: requestData
   })
-  .then(async (response) => {
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-
-    const boundary = "boundary123";
-    let responseBuffer = Buffer.from(await response.arrayBuffer());
-    let boundaryBuffer = Buffer.from(`--${boundary}`, 'utf-8');
-    let parts = responseBuffer.split(boundaryBuffer);
-    let jsonData = null;
-    let audioBuffer = null;
-
-    // Processes the response parts to extract JSON and audio
-    parts.forEach(part => {
-      let headerEndIndex = part.indexOf('\r\n\r\n');
-      if (headerEndIndex !== -1) {
-        let headers = part.slice(0, headerEndIndex).toString('utf-8');
-        let body = part.slice(headerEndIndex + 4);
-
-        if (headers.includes("Content-Type: application/json")) {
-          // Extract JSON
-          jsonData = JSON.parse(body.toString('utf-8').trim());
-        } else if (headers.includes("Content-Type: audio/wav")) {
-          // Extract audio file
-          audioBuffer = body;
-        }
+    .then(response => handleApiResponse(response, "RESPONSE_DATA_RETRY"))
+    .catch(error => {
+      if (port) {
+        port.postMessage({ type: "ERROR", message: error.message });
       }
     });
-
-    if (jsonData && audioBuffer) {
-      
-      const audioBlob = new Blob([audioBuffer], { type: 'audio/wav' });
-      const base64Blob = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = () => {
-          const base64Data = reader.result;
-          resolve(base64Data);
-        };
-      });
-      // Send a message to the popup with the data
-      if (port) {
-        port.postMessage({ type: "RESPONSE_DATA_RETRY", data: {
-          json: jsonData,
-          base64Blob: base64Blob
-        }});
-      }
-    }
-  })
-  .catch(error => {
-    // Error handling: send message to the popup
-    if (port) {
-      port.postMessage({ type: "ERROR", message: error.message });
-    }
-  });
 }
-
 /**
  * Sets up the context menu when the extension is installed.
  */
