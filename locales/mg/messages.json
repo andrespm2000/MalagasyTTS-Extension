@@ -1,1 +1,79 @@
-
+{
+  "extensionName": {
+    "message": "MalagasyTTS"
+  },
+  "extensionDescription": {
+    "message": "Fandikana lahatsoratra voafantina sy famoronana feo amin'ny teny Malagasy."
+  },
+  "popupTitle": {
+    "message": "Malagasy"
+  },
+  "popupSelectTextPrompt": {
+    "message": "Misafidiana lahatsoratra handikana azafady."
+  },
+  "popupDetectedLanguage": {
+    "message": "Fiteny hita:"
+  },
+  "popupChooseLanguage": {
+    "message": "Mifidy fiteny:"
+  },
+  "popupDropdownPlaceholder": {
+    "message": "Fiteny"
+  },
+  "popupCopyButton": {
+    "message": "Kopia lahatsoratra nadika"
+  },
+  "popupAudioButton": {
+    "message": "Mameno feo"
+  },
+  "popupAudioButtonPlaying": {
+    "message": "Mamerina ny feo..."
+  },
+  "popupErrorPrefix": {
+    "message": "Error:"
+  },
+  "optionsTitle": {
+    "message": "Safidy"
+  },
+  "optionsApiEndpoint": {
+    "message": "API endpoint"
+  },
+  "optionsDetectionModel": {
+    "message": "Modely famantarana"
+  },
+  "optionsTranslationModel": {
+    "message": "Modely fandikana"
+  },
+  "optionsNarrationModel": {
+    "message": "Modely fitantarana"
+  },
+  "optionsSaveButton": {
+    "message": "Tahiry fanovana"
+  },
+  "optionsSavedSuccess": {
+    "message": "Angona voatahiry tsara!"
+  },
+  "optionsApiError": {
+    "message": "Error: Endpoint API tsy mety na mpizara tsy misy"
+  },
+  "lang_ar": { "message": "Arabo" },
+  "lang_bg": { "message": "Bolgara" },
+  "lang_de": { "message": "Alemana" },
+  "lang_el": { "message": "Grika" },
+  "lang_en": { "message": "Anglisy" },
+  "lang_es": { "message": "Espaniôla" },
+  "lang_fr": { "message": "Frantsay" },
+  "lang_hi": { "message": "Hindi" },
+  "lang_it": { "message": "Italiana" },
+  "lang_ja": { "message": "Japoney" },
+  "lang_nl": { "message": "Holandey" },
+  "lang_pl": { "message": "Poloney" },
+  "lang_pt": { "message": "Portogey" },
+  "lang_ru": { "message": "Rosiana" },
+  "lang_sw": { "message": "Swahili" },
+  "lang_th": { "message": "Taỳ" },
+  "lang_tr": { "message": "Tiorka" },
+  "lang_ur": { "message": "Urdu" },
+  "lang_vi": { "message": "Vietnamiana" },
+  "lang_zh": { "message": "Sinoa" }
+}
