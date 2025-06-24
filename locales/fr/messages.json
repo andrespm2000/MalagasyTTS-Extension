@@ -1,1 +1,79 @@
-
+{
+  "extensionName": {
+    "message": "MalagasyTTS"
+  },
+  "extensionDescription": {
+    "message": "Traduire le texte sélectionné et générer de l'audio en malgache."
+  },
+  "popupTitle": {
+    "message": "Malagasy"
+  },
+  "popupSelectTextPrompt": {
+    "message": "Veuillez sélectionner le texte à traduire."
+  },
+  "popupDetectedLanguage": {
+    "message": "Langue détectée:"
+  },
+  "popupChooseLanguage": {
+    "message": "Choisir la langue:"
+  },
+  "popupDropdownPlaceholder": {
+    "message": "Langue"
+  },
+  "popupCopyButton": {
+    "message": "Copier le texte traduit"
+  },
+  "popupAudioButton": {
+    "message": "Lire l'audio"
+  },
+  "popupAudioButtonPlaying": {
+    "message": "Lecture de l'audio..."
+  },
+  "popupErrorPrefix": {
+    "message": "Erreur:"
+  },
+  "optionsTitle": {
+    "message": "Options"
+  },
+  "optionsApiEndpoint": {
+    "message": "API endpoint"
+  },
+  "optionsDetectionModel": {
+    "message": "Modèle de détection"
+  },
+  "optionsTranslationModel": {
+    "message": "Modèle de traduction"
+  },
+  "optionsNarrationModel": {
+    "message": "Modèle de narration"
+  },
+  "optionsSaveButton": {
+    "message": "Enregistrer les modifications"
+  },
+  "optionsSavedSuccess": {
+    "message": "Modifications enregistrées avec succès!"
+  },
+  "optionsApiError": {
+    "message": "Erreur: Endpoint API invalide ou serveur indisponible"
+  },
+  "lang_ar": { "message": "Arabe" },
+  "lang_bg": { "message": "Bulgare" },
+  "lang_de": { "message": "Allemand" },
+  "lang_el": { "message": "Grec" },
+  "lang_en": { "message": "Anglais" },
+  "lang_es": { "message": "Espagnol" },
+  "lang_fr": { "message": "Français" },
+  "lang_hi": { "message": "Hindi" },
+  "lang_it": { "message": "Italien" },
+  "lang_ja": { "message": "Japonais" },
+  "lang_nl": { "message": "Néerlandais" },
+  "lang_pl": { "message": "Polonais" },
+  "lang_pt": { "message": "Portugais" },
+  "lang_ru": { "message": "Russe" },
+  "lang_sw": { "message": "Swahili" },
+  "lang_th": { "message": "Thaï" },
+  "lang_tr": { "message": "Turc" },
+  "lang_ur": { "message": "Ourdou" },
+  "lang_vi": { "message": "Vietnamien" },
+  "lang_zh": { "message": "Chinois" }
+}
