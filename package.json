@@ -10,7 +10,8 @@
     "build:chrome": "plasmo build",
     "build:firefox": "plasmo build --target=firefox-mv3",
     "package:chrome": "plasmo package",
-    "package:firefox": "plasmo package --target=firefox-mv3"
+    "package:firefox": "plasmo package --target=firefox-mv3",
+    "build-n-package": "npm run build:chrome && npm run package:chrome && npm run build:firefox && npm run package:firefox"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -71,7 +72,6 @@
         "id": "andresperdomo737@gmail.com"
       }
     },
-    "default_locale": "en",
-    "languages":["en","mg","fr"]
+    "default_locale": "en"
   }
 }
