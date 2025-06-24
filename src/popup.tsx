@@ -38,6 +38,7 @@ const Popup = () => {
     "vi": "Vietnamiana",
     "zh": "Sinoa"
   }
+  const tLang = (code: string) => chrome.i18n ? chrome.i18n.getMessage(`lang_${code}`) : code;
 
   /** Text selected by the user. */
   const [selectedText, setSelectedText] = useState("");
@@ -53,6 +54,7 @@ const Popup = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const portRef = useRef<chrome.runtime.Port | null>(null);
+  const t = (key: string) => chrome.i18n ? chrome.i18n.getMessage(key) : key;
 
   /**
    * Effect that establishes the connection with the background script and handles received messages.
@@ -187,9 +189,10 @@ const handleCopyText = () => {
   return (
     <div className="container">
       <div className="header">
-      <img src={extensionIcon} alt="Extension Icon" className="extension-icon" />
+      <img src={extensionIcon} alt={t("extensionName")} className="extension-icon" />
       <h1>
-        Malagasy<span style={{ color: "#FFFFFF" }}>T</span>
+        {t("popupTitle")}
+        <span style={{ color: "#FFFFFF" }}>T</span>
         <span style={{ color: "#F9423A" }}>T</span>
         <span style={{ color: "#00843D" }}>S</span>
       </h1>
@@ -203,7 +206,7 @@ const handleCopyText = () => {
         <div className="detected-lang">
           {detectedLang && detectedLang in languages ? (
             <p>
-              <strong>Fiteny hita:</strong> {languages[detectedLang as keyof typeof languages]}
+              <strong>{t("popupDetectedLanguage")}</strong> {tLang(detectedLang)}
             </p>
           ) : (
             <Skeleton height={20} width="100%" baseColor="#151C12" highlightColor="#F9423A" />
@@ -212,7 +215,7 @@ const handleCopyText = () => {
         <div className="detected-lang">
           {detectedLang && detectedLang in languages ? (
             <>
-              <label htmlFor="language-select" style={{ color: "#fff", marginRight: 8 }}><strong>Mifidy fiteny:</strong></label>
+              <label htmlFor="language-select" style={{ color: "#fff", marginRight: 8 }}><strong>{t("popupChooseLanguage")}</strong></label>
               <select
                 id="language-select"
                 onChange={async (e) => {
@@ -230,10 +233,10 @@ const handleCopyText = () => {
                 defaultValue=""
                 style={{ padding: "2px 4px", borderRadius: 4, fontSize: "0.75em", width: "auto", minWidth: 80, maxWidth: 160, background: "#151C12",color: "#FFFFFF",border: "1px solid #E0E0E0"}}
               >
-                <option value="" disabled>Fiteny</option>
-                {Object.entries(languages).map(([code, name]) => (
-                  <option key={code} value={code}>{name}</option>
-                ))}
+                <option value="" disabled>{t("popupDropdownPlaceholder")}</option>
+                {Object.keys(languages).map((code) => (
+                  <option key={code} value={code}>{tLang(code)}</option>
+          ))}
               </select>
             </>
           ) : (
@@ -245,17 +248,17 @@ const handleCopyText = () => {
             <>
               <p className="translated-text">{translatedText}</p>
               <div className="button-group">
-                <button onClick={handleCopyText} className="copy-button" title="Kopia lahatsoratra nadika">
-                  <img src={copyIcon} alt="Kopia" className="copy-icon" />
+                <button onClick={handleCopyText} className="copy-button" title={t("popupCopyButton")}>
+                  <img src={copyIcon} alt={t("popupCopyButton")} className="copy-icon" />
                 </button>
                 {audioUrl && (
                   <button
                     onClick={handlePlayAudio}
                     disabled={isPlaying}
                     className="audio-button"
-                    title={isPlaying ? "Mamerina ny feo..." : "Mameno feo"}
+                    title={isPlaying ? t("popupAudioButtonPlaying") : t("popupAudioButton")}
                   >
-                    <img src={audioIcon} alt="Henoy" className="audio-icon" />
+                    <img src={audioIcon} alt={t("popupAudioButton")} className="audio-icon" />
                   </button>
                 )}
               </div>
@@ -270,13 +273,13 @@ const handleCopyText = () => {
         {error ? (
           <div>
             <p style={{ color: "red", textAlign: "center" }}>
-              Error: {error}
+              {t("popupErrorPrefix")} {error}
             </p>
           </div>
         ) : (
           <div>
             <p style={{ color: "#FFFFFF", textAlign: "center" }}>
-              Misafidiana lahatsoratra handikana azafady.
+              {t("popupSelectTextPrompt")}
             </p>
           </div>
         )}

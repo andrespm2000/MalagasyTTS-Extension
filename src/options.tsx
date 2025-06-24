@@ -16,6 +16,9 @@ const config = {
  * Allows the user to configure the API endpoint and models used by the extension.
  */
 function OptionsIndex() {
+
+    const t = (key: string) => chrome.i18n ? chrome.i18n.getMessage(key) : key;
+  
   /** State that stores the API URL and models configured by the user. */
   const [apiUrl, setApiUrl] = useState("");
   const [detModel, setDetModel] = useState("");
@@ -90,15 +93,15 @@ const validateForm: ValidateForm = async (endpoint) => {
       <div className="options-header">
         <img
           src={extensionIcon}
-          alt="Extension Icon"
+          alt={t("extensionName")}
           style={{ width: "32px", height: "32px" }}
         />
-        <h1 className="options-title">Safidy</h1>
+        <h1 className="options-title">{t("optionsTitle")}</h1>
       </div>
       <hr className="options-hr" />
       <div className="options-form">
       <div className="options-group">
-        <h2>API endpoint</h2>
+        <h2>{t("optionsApiEndpoint")}</h2>
         <input
           type="text"
           placeholder={apiUrl ? apiUrl : config.apiUrl}
@@ -109,12 +112,12 @@ const validateForm: ValidateForm = async (endpoint) => {
         />
         {error && (
                         <span className="error-message">
-                            {error}
+                            {t("optionsApiError")}
                         </span>
                     )}
       </div>
       <div className="options-group">
-        <h2>Modely famantarana</h2>
+        <h2>{t("optionsDetectionModel")}</h2>
         <input
           type="text"
           placeholder={detModel ? detModel : config.detModel}
@@ -123,7 +126,7 @@ const validateForm: ValidateForm = async (endpoint) => {
         />
       </div>
       <div className="options-group">
-        <h2>Modely fandikana</h2>
+        <h2>{t("optionsTranslationModel")}</h2>
         <input
           type="text"
           placeholder={transModel ? transModel : config.transModel}
@@ -132,7 +135,7 @@ const validateForm: ValidateForm = async (endpoint) => {
         />
       </div>
       <div className="options-group">
-        <h2>Modely fitantarana</h2>
+        <h2>{t("optionsNarrationModel")}</h2>
         <input
           type="text"
           placeholder={narrModel ? narrModel : config.narrModel}
@@ -145,14 +148,14 @@ const validateForm: ValidateForm = async (endpoint) => {
         onClick={handleSave}
         className="options-save-btn"
       >
-        Tahiry fanovana
+        {t("optionsSaveButton")}
       </button>
        {showSuccess && (
         <div
           className={`options-alert-overlay${fadeOut ? " fade-out" : ""}`}
         >
           <Alert severity="success">
-            Angona voatahiry tsara!
+            {t("optionsSavedSuccess")}
           </Alert>
         </div>
       )}
