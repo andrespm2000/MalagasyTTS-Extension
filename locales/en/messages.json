@@ -1,1 +1,79 @@
-
+{
+  "extensionName": {
+    "message": "MalagasyTTS"
+  },
+  "extensionDescription": {
+    "message": "Translate selected text and generate audio in Malagasy."
+  },
+  "popupTitle": {
+    "message": "Malagasy"
+  },
+  "popupSelectTextPrompt": {
+    "message": "Please select text to translate."
+  },
+  "popupDetectedLanguage": {
+    "message": "Detected language:"
+  },
+  "popupChooseLanguage": {
+    "message": "Choose language:"
+  },
+  "popupDropdownPlaceholder": {
+    "message": "Language"
+  },
+  "popupCopyButton": {
+    "message": "Copy translated text"
+  },
+  "popupAudioButton": {
+    "message": "Play audio"
+  },
+  "popupAudioButtonPlaying": {
+    "message": "Playing audio..."
+  },
+  "popupErrorPrefix": {
+    "message": "Error:"
+  },
+  "optionsTitle": {
+    "message": "Options"
+  },
+  "optionsApiEndpoint": {
+    "message": "API endpoint"
+  },
+  "optionsDetectionModel": {
+    "message": "Detection model"
+  },
+  "optionsTranslationModel": {
+    "message": "Translation model"
+  },
+  "optionsNarrationModel": {
+    "message": "Narration model"
+  },
+  "optionsSaveButton": {
+    "message": "Save changes"
+  },
+  "optionsSavedSuccess": {
+    "message": "Changes saved successfully!"
+  },
+  "optionsApiError": {
+    "message": "Error: Invalid API endpoint or server unavailable"
+  },
+  "lang_ar": { "message": "Arabic" },
+  "lang_bg": { "message": "Bulgarian" },
+  "lang_de": { "message": "German" },
+  "lang_el": { "message": "Greek" },
+  "lang_en": { "message": "English" },
+  "lang_es": { "message": "Spanish" },
+  "lang_fr": { "message": "French" },
+  "lang_hi": { "message": "Hindi" },
+  "lang_it": { "message": "Italian" },
+  "lang_ja": { "message": "Japanese" },
+  "lang_nl": { "message": "Dutch" },
+  "lang_pl": { "message": "Polish" },
+  "lang_pt": { "message": "Portuguese" },
+  "lang_ru": { "message": "Russian" },
+  "lang_sw": { "message": "Swahili" },
+  "lang_th": { "message": "Thai" },
+  "lang_tr": { "message": "Turkish" },
+  "lang_ur": { "message": "Urdu" },
+  "lang_vi": { "message": "Vietnamese" },
+  "lang_zh": { "message": "Chinese" }
+}
